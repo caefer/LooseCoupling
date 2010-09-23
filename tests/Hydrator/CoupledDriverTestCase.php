@@ -63,6 +63,14 @@ class Doctrine_Hydrator_CoupledDriver_TestCase extends Doctrine_UnitTestCase
       $this->assertEqual('Image', get_class($result[1]->Object));
       $this->assertEqual('my-image.jpg', $result[1]->Object->filename);
     }
+
+    public function testLazyCoupling()
+    {
+      $q = Doctrine_Core::getTable('AggregateList')->createQuery('l');
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_RECORD);
+      $this->assertEqual('Article', get_class($result[0]->Object));
+      $this->assertEqual('Image', get_class($result[1]->Object));
+    }
 }
 
 class Article extends Doctrine_Record
