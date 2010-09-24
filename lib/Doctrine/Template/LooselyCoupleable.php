@@ -17,7 +17,7 @@ class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
     }
     else if(isset($record->obj_type) && isset($record->obj_id))
     {
-      $record->Object = Doctrine_Core::getTable($return->obj_type)->find($record->obj_id);
+      $record->Object = Doctrine_Core::getTable($record->obj_type)->find($record->obj_id);
       return $record->Object;
     }
     else
