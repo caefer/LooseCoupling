@@ -14,8 +14,15 @@ class Doctrine_Hydrator_RecordCoupledDriver extends Doctrine_Hydrator_RecordDriv
   protected function _gatherRowData(&$data, &$cache, &$id, &$nonemptyComponents)
   {
     $rowData = parent::_gatherRowData($data, $cache, $id, $nonemptyComponents);
-    $this->_looseObjects[$rowData[$this->rootAlias]['obj_type']][$rowData[$this->rootAlias]['obj_pk']] = $rowData[$this->rootAlias]['obj_pk'];
-    $rowData[$this->rootAlias]['Object'] = &$this->_looseObjects[$rowData[$this->rootAlias]['obj_type']][$rowData[$this->rootAlias]['obj_pk']];
+    foreach(array_keys($rowData) as $alias)
+    {
+      if(array_key_exists('obj_type', $rowData[$alias]) && array_key_exists('obj_pk', $rowData[$alias])
+         && !empty($rowData[$alias]['obj_type']) && !empty($rowData[$alias]['obj_pk']))
+      {
+        $this->_looseObjects[$rowData[$alias]['obj_type']][$rowData[$alias]['obj_pk']] = $rowData[$alias]['obj_pk'];
+        $rowData[$alias]['Object'] = &$this->_looseObjects[$rowData[$alias]['obj_type']][$rowData[$alias]['obj_pk']];
+      }
+    }
     return $rowData;
   }
 
