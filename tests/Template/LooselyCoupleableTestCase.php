@@ -25,11 +25,11 @@ class Doctrine_Template_LooselyCoupleable_TestCase extends Doctrine_UnitTestCase
     {
         $item = new LooselyCoupleableItem();
         $item->obj_type = 'Model';
-        $item->obj_id = 1;
+        $item->obj_pk = 1;
         $item->save();
 
         $this->assertEqual($item->obj_type, 'Model');
-        $this->assertEqual($item->obj_id, 1);
+        $this->assertEqual($item->obj_pk, 1);
     }
 }
 

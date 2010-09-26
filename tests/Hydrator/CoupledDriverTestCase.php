@@ -28,13 +28,13 @@ class Doctrine_Hydrator_CoupledDriver_TestCase extends Doctrine_UnitTestCase
 
       $list1 = new AggregateList();
       $list1->listname = 'first list';
-      $list1->obj_id = $article->id;
+      $list1->obj_pk = $article->id;
       $list1->obj_type = get_class($article);
       $list1->save();
 
       $list2 = new AggregateList();
       $list2->listname = 'second list';
-      $list2->obj_id = $image->id;
+      $list2->obj_pk = $image->id;
       $list2->obj_type = get_class($image);
       $list2->save();
     }
