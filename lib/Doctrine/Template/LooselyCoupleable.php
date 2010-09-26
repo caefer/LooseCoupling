@@ -1,6 +1,8 @@
 <?php
 class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
 {
+  protected $Object;
+
   public function setTableDefinition()
   {
     $this->hasColumn('obj_type', 'string', 48, array('type' => 'string', 'length' => 48));
@@ -11,14 +13,14 @@ class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
   {
     $record = $this->getInvoker();
 
-    if(isset($record->Object))
+    if(isset($this->Object))
     {
-      return $record->Object;
+      return $this->Object;
     }
     else if(isset($record->obj_type) && isset($record->obj_pk))
     {
-      $record->Object = Doctrine_Core::getTable($record->obj_type)->find($record->obj_pk);
-      return $record->Object;
+      $this->Object = Doctrine_Core::getTable($record->obj_type)->find($record->obj_pk);
+      return $this->Object;
     }
     else
     {
@@ -32,7 +34,7 @@ class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
     $record = $this->getInvoker();
     $record->obj_type = $this->_findObjectType($object);
     $record->obj_pk   = $this->_findObjectPrimaryKey($object);
-    $record->Object   = $object;
+    $this->Object   = $object;
   }
 
   protected function _findObjectType($object)
@@ -49,6 +51,6 @@ class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
       throw new Doctrine_Record_Exception("Couldn't set identifier. LooseCoupling does not support multi column primary keys!.");
     }
 
-    return $identifier[0];
+    return current($identifier);
   }
 }
