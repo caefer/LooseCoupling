@@ -59,6 +59,10 @@ The behaviour will add the two columns `obj_type` and `obj_pk` to your model and
 
 > The only limitation is that only single column primary key models can be used!
 
+The above table can be illustrated like this.
+
+![LooseCoupling example illustration](http://yuml.me/diagram/scruffy/class/[YourModel]couples -.-[Image], [YourModel]couples -.-[Article].)
+
 The template will also provide a virtual column `Object`.
 
 You can now add any Doctrine_Record to YourModel as the following code demonstrates.
