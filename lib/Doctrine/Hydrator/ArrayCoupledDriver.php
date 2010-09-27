@@ -2,6 +2,7 @@
 class Doctrine_Hydrator_ArrayCoupledDriver extends Doctrine_Hydrator_ArrayDriver
 {
   protected $_looseObjects = array();
+  protected $_applicableAliases = null;
 
   public function hydrateResultSet($stmt)
   {
@@ -13,16 +14,34 @@ class Doctrine_Hydrator_ArrayCoupledDriver extends Doctrine_Hydrator_ArrayDriver
   protected function _gatherRowData(&$data, &$cache, &$id, &$nonemptyComponents)
   {
     $rowData = parent::_gatherRowData($data, $cache, $id, $nonemptyComponents);
-    foreach(array_keys($rowData) as $alias)
+
+    foreach($this->getApplicableAliases($rowData) as $alias)
     {
-      if(array_key_exists('obj_type', $rowData[$alias]) && array_key_exists('obj_pk', $rowData[$alias])
-         && !empty($rowData[$alias]['obj_type']) && !empty($rowData[$alias]['obj_pk']))
+      if(!empty($rowData[$alias]['obj_type']) && !empty($rowData[$alias]['obj_pk']))
       {
         $this->_looseObjects[$rowData[$alias]['obj_type']][$rowData[$alias]['obj_pk']] = $rowData[$alias]['obj_pk'];
         $rowData[$alias]['Object'] = &$this->_looseObjects[$rowData[$alias]['obj_type']][$rowData[$alias]['obj_pk']];
       }
     }
+
     return $rowData;
+  }
+
+  protected function getApplicableAliases($rowData = array())
+  {
+    if(is_null($this->_applicableAliases))
+    {
+      $this->_applicableAliases = array();
+      foreach(array_keys($rowData) as $alias)
+      {
+        if(array_key_exists('obj_type', $rowData[$alias]) && array_key_exists('obj_pk', $rowData[$alias]))
+        {
+          $this->_applicableAliases[] = $alias;
+        }
+      }
+    }
+
+    return $this->_applicableAliases;
   }
 
   protected function _collectObjects()
