@@ -1,5 +1,6 @@
 <?php
-class Doctrine_Template_LooselyCoupleable extends Doctrine_Template
+
+class LooselyCoupleable extends Doctrine_Template
 {
   protected $_objectCache = array();
 
