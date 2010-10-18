@@ -25,6 +25,8 @@ $manager = Doctrine_Manager::getInstance()
 
 $test = new DoctrineTest();
 $test->addTestCase(new Doctrine_Template_LooselyCoupleable_TestCase());
+$test->addTestCase(new Doctrine_Template_LooselyCoupled_TestCase());
+$test->addTestCase(new Doctrine_Template_LooselyCoupledListener_TestCase());
 $test->addTestCase(new Doctrine_Hydrator_CoupledDriver_TestCase());
 
 exit($test->run() ? 0 : 1);
