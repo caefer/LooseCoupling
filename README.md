@@ -17,7 +17,7 @@ To use this extension on any of your models you have to apply the behaviour to i
 
       public function setUp()
       {
-        $this->actAs('Doctrine_Template_LooselyCoupleable');
+        $this->actAs('LooselyCoupleable');
       }
     }
 
@@ -25,7 +25,7 @@ Here the same as above using a schema.yml definition.
 
 ---
     YourModel:
-      actAs: [Doctrine_Template_LooselyCoupleable]
+      actAs: [LooselyCoupleable]
       columns:
         ...
 The behaviour will add the two columns `obj_type` and `obj_pk` to your model and database table and provides two delegate methods `getObject()` and `setObject(Doctrine_Record $object)`.
