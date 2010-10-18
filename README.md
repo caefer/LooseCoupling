@@ -17,17 +17,18 @@ To use this extension on any of your models you have to apply the behaviour to i
 
       public function setUp()
       {
-        $this->actAs('LooselyCoupleable');
+        $looselycoupleable = new LooselyCoupleable();
+        $this->actAs($looselycoupleable);
       }
     }
 
 Here the same as above using a schema.yml definition.
 
----
     YourModel:
       actAs: [LooselyCoupleable]
       columns:
         ...
+
 The behaviour will add the two columns `obj_type` and `obj_pk` to your model and database table and provides two delegate methods `getObject()` and `setObject(Doctrine_Record $object)`.
 
 <table>
@@ -110,3 +111,44 @@ By using the `RecordCoupled` hydrator the number of queries gets reduced to the 
 There are two hydrator modes available `Doctrine_Hydrator_ArrayCoupled` and `Doctrine_Hydrator_RecordCoupled` which can replace the default `Doctrine_Core::HYDRATE_ARRAY` and `Doctrine_Core::HYDRATE_RECORD`.
 
 Even when YourModel is only considered by i.e. a `leftJoin()` in one of your queries its loosely coupled relations will be made available.
+
+## A complementary behaviour for the object
+
+Looking at the above example it might be desireable to be able to fetch all instances of `YourModel` for an `Article` that have a loose coupling to it.
+
+However you can not simply define a relation as it would not filter out those that share the correct primary key but not the correct model. For this there is a complementary behaviour called `LooselyCoupled`.
+
+    class Article extends Doctrine_Record
+    {
+      public function setTableDefinition()
+      {
+        ...
+      }
+
+      public function setUp()
+      {
+        $looselycoupled = new LooselyCoupled(array('Models' => 'YourModel'));
+        $this->actAs($looselycoupled);
+      }
+    }
+
+Where `Models` is the alias and `YourModel` refers to the related model name. Here the same as above using a schema.yml definition.
+
+
+    YourModel:
+      actAs:
+        LooselyCoupled:
+          Models: YourModel
+      columns:
+        ...
+
+This behaviour will add a listener that will extend the anty `LEFT JOIN` to the `YourModel` table by a filter for the correct `obj_type`.
+
+You can now access all `YourModel` instances that are loosely coupled to an article like in the following example.
+
+
+    $ones = Doctrine_Core::getTable('Article')
+      ->createQuery('a')
+      ->leftJoin('a.Models m')
+      ->execute();
+
