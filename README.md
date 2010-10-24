@@ -152,3 +152,5 @@ You can now access all `YourModel` instances that are loosely coupled to an arti
       ->leftJoin('a.Models m')
       ->execute();
 
+This passive behaviour will also ensure that loosely coupled objects get deleted when the origin - in this case `Article` - is deleted.
+

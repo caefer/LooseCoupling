@@ -9,6 +9,22 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     $this->_options = $options;
   }
 
+  public function postDelete(Doctrine_Event $event)
+  {
+    $subject = $event->getInvoker();
+    $type = get_class($subject);
+    $pk = current($subject->identifier());
+
+    foreach($this->_options as $modelClass)
+    {
+      Doctrine_Query::create()
+        ->delete($modelClass.' o')
+        ->addWhere('o.obj_type = ?', $type)
+        ->addWhere('o.obj_pk = ?', $pk)
+        ->execute();
+    }
+  }
+
   public function preDqlSelect(Doctrine_Event $event)
   {
     $query = $event->getQuery();
