@@ -56,7 +56,7 @@ class Doctrine_Hydrator_RecordCoupledDriver extends Doctrine_Hydrator_RecordDriv
       }
 
       $objects = $table->createQuery('o')
-                       ->whereIn('o.'.$identifier[0], $ids)
+                       ->whereIn('o.'.$identifier[0], array_keys($ids))
                        ->execute(array(), Doctrine_Core::HYDRATE_RECORD);
 
       foreach($objects as $object)

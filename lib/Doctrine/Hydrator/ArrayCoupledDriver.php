@@ -57,7 +57,7 @@ class Doctrine_Hydrator_ArrayCoupledDriver extends Doctrine_Hydrator_ArrayDriver
       }
 
       $objects = $table->createQuery('o')
-                       ->whereIn('o.'.$identifier[0], $ids)
+                       ->whereIn('o.'.$identifier[0], array_keys($ids))
                        ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
 
       foreach($objects as $objectData)
