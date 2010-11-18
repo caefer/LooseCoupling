@@ -15,7 +15,7 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     $type = get_class($subject);
     $pk = current($subject->identifier());
 
-    foreach($this->_options as $modelClass)
+    foreach ($this->_options as $modelClass)
     {
       Doctrine_Query::create()
         ->delete($modelClass.' o')
@@ -36,7 +36,14 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     {
       if (isset($component['relation']))
       {
-        $query->addWhere($alias.'.obj_type = ?', get_class($event->getInvoker()));
+        foreach ($event->getInvoker()->getTable()->getRelations() as $relation)
+        {
+          if ($component['table'] == $relation->getTable())
+          {
+            $query->addWhere($alias.'.obj_type = ?', get_class($event->getInvoker()));
+            continue;
+          }
+        }
       }
     }
   }
