@@ -8,6 +8,7 @@ class LooselyCoupleable extends Doctrine_Template
   {
     $this->hasColumn('obj_type', 'string', 48, array('type' => 'string', 'length' => 48));
     $this->hasColumn('obj_pk', 'integer', 4, array('unsigned' => true));
+    $this->getInvoker()->hasAccessor('Object', 'getObject');
   }
 
   public function getObject()
