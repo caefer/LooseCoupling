@@ -40,7 +40,8 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
         {
           if ($component['table'] == $relation->getTable())
           {
-            $query->addWhere($alias.'.obj_type = ?', get_class($event->getInvoker()));
+            $identifier = $component['table']->getIdentifier();
+            $query->addWhere('('.$alias.'.obj_type = ? OR ('.$alias.'.'.$identifier.' IS NULL AND '.$alias.'.obj_type IS NULL))', get_class($event->getInvoker()));
             continue;
           }
         }
