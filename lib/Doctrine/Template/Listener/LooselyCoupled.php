@@ -25,6 +25,29 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     }
   }
 
+  public function preSave(Doctrine_Event $event)
+  {
+    $record = $event->getInvoker();
+
+    foreach($this->_options as $alias => $model)
+    {
+      $collection = $record[$alias];
+      $inserts = $collection->getInsertDiff();
+
+      foreach($inserts as $key => $insert)
+      {
+        $collection->remove($key);
+      }
+
+      $collection->takeSnapshot();
+
+      foreach($inserts as $key => $insert)
+      {
+        $collection->add($insert, $key);
+      }
+    }
+  }
+
   public function preDqlSelect(Doctrine_Event $event)
   {
     $query = $event->getQuery();
