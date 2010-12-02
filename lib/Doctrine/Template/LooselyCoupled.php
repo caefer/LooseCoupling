@@ -16,21 +16,37 @@ class LooselyCoupled extends Doctrine_Template
     foreach($this->_options as $alias => $modelName)
     {
       $this->hasMany($modelName.' as '.$alias, array('local' => 'id', 'foreign' => 'obj_pk'));
-      $this->getInvoker()->hasAccessor($alias, 'getLooselyCoupledRelation');
+      $this->getInvoker()->hasAccessor($alias, 'fetchLooselyCoupledRelation');
     }
   }
 
-  public function getLooselyCoupledRelation($load, $field)
+  public function fetchLooselyCoupledRelation($load, $field)
   {
     $record = $this->getInvoker();
-    $table = $record->getTable();
+    $record->clearAccessor($field);
 
-    $identifier = $record->identifier();
-    $identifier = array_shift($identifier);
+    if($record->hasReference($field))
+    {
+      return $record->reference($field);
+    }
 
-    return Doctrine_Query::create()
-      ->parseDqlQuery($table->getRelation($field)->getRelationDql(1))
-      ->addWhere('obj_type = ?')
-      ->execute(array($identifier, $table->getComponentName()));
+    $record->loadReference($field);
+    $collection = $this->filterWrongRelations($record, $field);
+    $record->setRelated($field, $collection);
+
+    return $collection;
+  }
+
+  protected function filterWrongRelations($record, $field)
+  {
+    $collection = $record->reference($field);
+    foreach($collection as $key => $related)
+    {
+      if($related['obj_type'] != $record->getTable()->getComponentName())
+      {
+        $collection->remove($key);
+      }
+    }
+    return $collection;
   }
 }
