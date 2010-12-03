@@ -55,16 +55,20 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     $relations = array_keys($this->_options);
 
     $components = $this->_getDqlCallbackComponents($query);
+    $rootComponentName = false;
     foreach ($components as $alias => $component)
     {
+      if(!$rootComponentName)
+      {
+        $rootComponentName = $component['table']->getComponentName();
+      }
       if (isset($component['relation']))
       {
         foreach ($event->getInvoker()->getTable()->getRelations() as $relation)
         {
-          if ($component['table'] == $relation->getTable())
+          if ($component['table'] == $relation->getTable() && $relation->getTable()->hasTemplate('LooselyCoupleable'))
           {
-            $identifier = $component['table']->getIdentifier();
-            $query->addWhere('('.$alias.'.obj_type = ? OR ('.$alias.'.'.$identifier.' IS NULL AND '.$alias.'.obj_type IS NULL))', get_class($event->getInvoker()));
+            $query->addPendingJoinCondition($alias, $alias.'.obj_type = "'.$rootComponentName.'"');
             continue;
           }
         }
