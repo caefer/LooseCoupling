@@ -4,14 +4,14 @@ class Doctrine_Record_Filter_LooselyCoupleable extends Doctrine_Record_Filter
 {
   public function filterSet(Doctrine_Record $record, $name, $value)
   {
-    if('object' == strtolower($name))
+    if('object' != strtolower($name))
     {
-      $record->mapValue('Object', $value);
-      $record->obj_type = $this->_findObjectType($value);
-      $record->obj_pk   = $this->_findObjectPrimaryKey($value);
+      throw new Doctrine_Record_UnknownPropertyException(sprintf('*bah* Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
     }
 
-    throw new Doctrine_Record_UnknownPropertyException(sprintf('*bah* Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
+    $record->mapValue('Object', $value);
+    $record->obj_type = $this->_findObjectType($value);
+    $record->obj_pk   = $this->_findObjectPrimaryKey($value);
   }
 
   public function filterGet(Doctrine_Record $record, $name)
