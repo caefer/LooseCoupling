@@ -40,13 +40,14 @@ class LooselyCoupled extends Doctrine_Template
   protected function filterWrongRelations($record, $field)
   {
     $collection = $record->reference($field);
+    $newCollection = new Doctrine_Collection($collection->getTable(), $collection->getKeyColumn());
     foreach($collection as $key => $related)
     {
-      if($related['obj_type'] != $record->getTable()->getComponentName())
+      if($related['obj_type'] == $record->getTable()->getComponentName())
       {
-        $collection->remove($key);
+        $newCollection->add($collection->get($key));
       }
     }
-    return $collection;
+    return $newCollection;
   }
 }
