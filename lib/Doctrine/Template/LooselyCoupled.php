@@ -23,7 +23,6 @@ class LooselyCoupled extends Doctrine_Template
   public function fetchLooselyCoupledRelation($load, $field)
   {
     $record = $this->getInvoker();
-    $record->clearAccessor($field);
 
     if($record->hasReference($field))
     {
