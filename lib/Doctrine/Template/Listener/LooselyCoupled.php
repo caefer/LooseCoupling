@@ -86,7 +86,7 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     }
 
     $copy = $query->copy();
-    $copy->getSqlQuery($params);
+    $copy->getSqlQuery($params, 0);
     $componentsAfter = $copy->getQueryComponents();
 
     if ($componentsBefore !== $componentsAfter)
