@@ -53,25 +53,12 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     $query = $event->getQuery();
 
     $relations = array_keys($this->_options);
-
+    
     $components = $this->_getDqlCallbackComponents($query);
-    $rootComponentName = false;
     foreach ($components as $alias => $component)
     {
-      if(!$rootComponentName)
-      {
-        $rootComponentName = $component['table']->getComponentName();
-      }
-      if (isset($component['relation']))
-      {
-        foreach ($event->getInvoker()->getTable()->getRelations() as $relation)
-        {
-          if ($component['table'] == $relation->getTable() && $relation->getTable()->hasTemplate('LooselyCoupleable'))
-          {
-            $query->addPendingJoinCondition($alias, $alias.'.obj_type = "'.$rootComponentName.'"');
-            continue;
-          }
-        }
+      if (isset($component['relation']) && $event->getInvoker()->getTable()->getComponentName() == $component['relation']['localTable']->getComponentName() && $component['table']->hasTemplate('LooselyCoupleable')) {
+        $query->addPendingJoinCondition($alias, $alias.'.obj_type = "'.$component['relation']['localTable']->getComponentName().'"');
       }
     }
   }
@@ -86,7 +73,7 @@ class LooselyCoupledListener extends Doctrine_Record_Listener
     }
 
     $copy = $query->copy();
-    $copy->getSqlQuery($params);
+    $copy->getSqlQuery($params, 0);
     $componentsAfter = $copy->getQueryComponents();
 
     if ($componentsBefore !== $componentsAfter)

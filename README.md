@@ -97,8 +97,8 @@ The above example will issue 1 query to the database to fetch all `YourModel` in
 
 This is where the two new hydrator modes come into play. Rewriting the above example using these new modes we get this.
 
-    Doctrine_Manager::getInstance()->registerHydrator('ArrayCoupled', 'Doctrine_Hydrator_ArrayCoupled');
-    Doctrine_Manager::getInstance()->registerHydrator('RecordCoupled', 'Doctrine_Hydrator_RecordCoupled');
+    Doctrine_Manager::getInstance()->registerHydrator('ArrayCoupled', 'Doctrine_Hydrator_ArrayCoupled_Driver');
+    Doctrine_Manager::getInstance()->registerHydrator('RecordCoupled', 'Doctrine_Hydrator_RecordCoupled_Driver');
 
     $yourModels = Doctrine_Core::getTable('YourModel')->findAll('RecordCoupled');
     foreach($yourModels as $yourModel)
